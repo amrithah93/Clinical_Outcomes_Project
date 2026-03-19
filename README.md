@@ -1,2 +1,3 @@
-# Clinical_Outcomes_Project
-Clinical Outcomes Project
+# Clinical Outcomes Project
+
+This is a repo for tracking all code associated with the SPECT Clinical Outcomes Project. 
