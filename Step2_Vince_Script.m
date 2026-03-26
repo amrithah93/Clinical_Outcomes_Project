@@ -4,33 +4,29 @@
 %%variables for the log plots 
 %  Step 0: Setup
 % ------------------------------------------------------------
-cd  '/Users/amrithah/Desktop/CalhounLab/Dissertation/Projects/Chapter7_Paper_6_Diss_Clinical_Outcomes/ICA_Results/Depression_ICA_Analyses_Clinical_Outcomes'
+cd '/Users/amrithah/Desktop/CalhounLab/Dissertation/Projects/Chapter7_Paper_6_Diss_Clinical_Outcomes/ICA_Results/Depression_ICA_Analyses_Clinical_Outcomes';
 
-set(gca, 'FontSize', 13);
-set(findall(gcf, 'type', 'text'), 'FontSize', 13); %increase font size for all figures
-
+% Load group loading coefficients
 a = spm_read_vols(spm_vol('Depression_ICA_Output_Rest_Clinical_Outcomes_Results_group_loading_coeff_.nii'));
 
-hcind = 1:76; %76 subjects
-depind = 77:2819; %2743 subjects
-
+% Basic info
 nSub  = size(a,1);
-nComp = size(a,2);   % number of components directly from data
+nComp = size(a,2);
 
-%% ------------------------------------------------------------
-%  Step 1: Build full connectivity matrices for each subject
-% ------------------------------------------------------------
+% Subject groups
+hcind  = a(1:76);
+depind =a(77:2819);
+
+% Preallocate connectivity matrices
 out_mat = zeros(nSub, nComp, nComp);
 
+% Build connectivity matrices
 for j = 1:nSub
-    vec = icatb_mat2vec(a(j,:)' * a(j,:));   % vectorized connectivity
-    mat = icatb_vec2mat(vec);                % convert to square matrix
-    out_mat(j,:,:) = mat;                    % store
+    C = a(j,:)' * a(j,:);   % outer product = connectivity
+    out_mat(j,:,:) = C;
 end
 
 out_clean = out_mat;
-
-
 %% ------------------------------------------------------------
 %  Step 4: Compute group means
 % ------------------------------------------------------------
@@ -43,67 +39,66 @@ Diff_mean = HC_mean - dep_mean;
 HC_mean_final = HC_mean;
 dep_mean_final = dep_mean;
 Diff_mean_final = Diff_mean; 
-%% ------------------------------------------------------------
-%  Step 5: Plot all three matrices
-% --- Plot 1 ---
-plotMatrix(HC_mean_final, [-.8 .8], 'Average Control CoM');
+
+%% --- Make domain/subdomain labels appear only once ---
+
+% Convert categorical → cell array if needed
+Labels = cellstr(Labels);
+
+% Find unique categories in order of appearance
+[uniqueCats, ~, idx] = unique(Labels, 'stable');
+
+% Tick positions = first occurrence of each category
+tickPositions = arrayfun(@(u) find(idx == u, 1, 'first'), 1:numel(uniqueCats));
+
+%% for controls plot
+figure;
+imagesc(HC_mean_final, [-.8 .8]);
+colormap whitejet;
+axis image;
 colorbar;
-ax = gca;  % current axes
-set(gca, 'FontSize', 13);
-text(ax, 1.12, 0.5, 'z-scored CoM values', ...
-    'Units', 'normalized', ...
-    'HorizontalAlignment', 'center', ...
-    'VerticalAlignment', 'middle', ...
-    'Rotation', 90, ...
-    'FontWeight', 'bold');
-set(gca, 'FontSize', 13);
-%% 
-% --- Plot 2 ---
-plotMatrix(dep_mean_final, [-.8 .8], 'Average Patient CoM');
+title('Average Control CoM');
+
+xticks(tickPositions);
+yticks(tickPositions);
+
+xticklabels(uniqueCats);
+yticklabels(uniqueCats);
+
+xtickangle(90);
+
+savefig('Average_Control_CoM.fig');
+%%  for patients plot
+figure;
+imagesc(dep_mean_final, [-.8 .8]);
+colormap whitejet;
+axis image;
 colorbar;
+title('Average Patient CoM');
 
-ax = gca;
-set(gca, 'FontSize', 13);
-text(ax, 1.12, 0.5, 'z-scored CoM values', ...
-    'Units', 'normalized', ...
-    'HorizontalAlignment', 'center', ...
-    'VerticalAlignment', 'middle', ...
-    'Rotation', 90, ...
-    'FontWeight', 'bold');
-set(gca, 'FontSize', 13);
+xticks(tickPositions);
+yticks(tickPositions);
 
-%%  --- Plot 3 ---
-plotMatrix(Diff_mean_final, [-.4 .4], 'Average Control - Patient CoM');
+xticklabels(uniqueCats);
+yticklabels(uniqueCats);
+
+xtickangle(90);
+
+savefig('Average_Patient_CoM.fig');
+%% for diff plots
+figure;
+imagesc(Diff_mean_final, [-.4 .4]);
+colormap whitejet;
+axis image;
 colorbar;
+title('Average Control - Patient CoM');
 
-ax = gca;
-set(gca, 'FontSize', 13);
-text(ax, 1.12, 0.5, 'z-scored CoM values', ...
-    'Units', 'normalized', ...
-    'HorizontalAlignment', 'center', ...
-    'VerticalAlignment', 'middle', ...
-    'Rotation', 90, ...
-    'FontWeight', 'bold');
-%% ------------------------------------------------------------
-%  Nested function for plotting (updated to save .fig)
-% ------------------------------------------------------------
-function plotMatrix(M, clim, ttl, tickPositions, uniqueCats)
+xticks(tickPositions);
+yticks(tickPositions);
 
-    figure;
-    imagesc(M, clim);
-    colormap whitejet;
-    axis image;
-    colorbar;
-    title(ttl);
+xticklabels(uniqueCats);
+yticklabels(uniqueCats);
 
-    xticks(tickPositions);
-    yticks(tickPositions);
-    xticklabels(uniqueCats);
-    yticklabels(uniqueCats);
-    xtickangle(90);
+xtickangle(90);
 
-    % ---- Save figure as .fig ----
-    fname = [regexprep(ttl, '\s+', '_') '.fig'];
-    savefig(gcf, fname);
-
-end
+savefig('Average_Control_minus_Patient_CoM.fig');
