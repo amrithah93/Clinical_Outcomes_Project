@@ -8,4 +8,4 @@ Updated scripts including colored bar plots, connectogram, heat maps, and t-test
 
 *Updates as of 3/27/26*
 
-Updates to all scripts including bar plot and visualization scripts with updated montage plots, and adding *s to sig results. 
+Updates to all scripts including bar plot and visualization scripts with updated montage plots, and adding *s to sig results. Updated scripts to be Python focused.
