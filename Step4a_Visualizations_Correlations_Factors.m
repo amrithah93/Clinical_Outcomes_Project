@@ -113,7 +113,7 @@ icatb_image_viewer(files, ...
     'image_values', 'positive', ...
     'iscomposite','yes');
 
-title ('Significant positive correlations and its respective loadings for social disinterest: FDR Corrected '); 
+title ('Significant negative correlations and its respective loadings for social disinterest: FDR Corrected '); 
 set(gca, 'FontSize', 13);
 
 % Save the figure
