@@ -1,8 +1,5 @@
 %% ------------------------------------------------------------
-
-%%used this for the main figure plotting, I used Step2_3 for calling
-%%variables for the log plots 
-%  Step 0: Setup
+% Step 0: Setup
 % ------------------------------------------------------------
 cd '/Users/amrithah/Desktop/CalhounLab/Dissertation/Projects/Chapter7_Paper_6_Diss_Clinical_Outcomes/ICA_Results/Depression_ICA_Analyses_Clinical_Outcomes';
 
@@ -13,33 +10,36 @@ a = spm_read_vols(spm_vol('Depression_ICA_Output_Rest_Clinical_Outcomes_Results_
 nSub  = size(a,1);
 nComp = size(a,2);
 
-% Subject groups
-hcind  = a(1:76);
-depind =a(77:2819);
+% ------------------------------------------------------------
+% FIXED: Subject groups must be INDEX VECTORS, not voxel values
+% ------------------------------------------------------------
+hcind  = 1:76;          % first 76 subjects
+depind = 77:nSub;       % remaining subjects
 
 % Preallocate connectivity matrices
 out_mat = zeros(nSub, nComp, nComp);
 
 % Build connectivity matrices
 for j = 1:nSub
-    C = a(j,:)' * a(j,:);   % outer product = connectivity
+    C = a(j,:)' * a(j,:);   % outer product  
     out_mat(j,:,:) = C;
 end
 
 out_clean = out_mat;
+
 %% ------------------------------------------------------------
-%  Step 4: Compute group means
+% Step 4: Compute group means
 % ------------------------------------------------------------
-HC_mean   = squeeze(mean(out_clean(hcind,:,:)));
-dep_mean   = squeeze(mean(out_clean(depind,:,:)));
+HC_mean  = squeeze(mean(out_clean(hcind,:,:), 1));
+dep_mean = squeeze(mean(out_clean(depind,:,:), 1));
+
 Diff_mean = HC_mean - dep_mean;
 
-%% 
+%% ------------------------------------------------------------
 % Step 5: Reorder within domain for the 3 matrices
-HC_mean_final = HC_mean;
+HC_mean_final  = HC_mean;
 dep_mean_final = dep_mean;
-Diff_mean_final = Diff_mean; 
-
+Diff_mean_final = Diff_mean;
 %% --- Make domain/subdomain labels appear only once ---
 
 % Convert categorical → cell array if needed
