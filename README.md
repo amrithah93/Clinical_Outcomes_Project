@@ -9,3 +9,7 @@ Updated scripts including colored bar plots, connectogram, heat maps, and t-test
 *Updates as of 3/27/26*
 
 Updates to all scripts including bar plot and visualization scripts with updated montage plots, and adding *s to sig results. Updated scripts to be Python focused.
+
+*Updates as of 4/5/26*
+
+Updated all scripts with the new SPECT template ordering, and rerun analyses with the new template as of 4/5/2026. VI-OT is now included. 
